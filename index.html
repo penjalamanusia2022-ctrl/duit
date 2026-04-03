@@ -537,6 +537,28 @@ footer{
   .hero-stats{gap:24px;}
   footer{padding:28px 24px;flex-direction:column;text-align:center;}
 }
+
+  /* ─── STYLE KHUSUS GLOBE ─── */
+#global-visualization {
+    background: var(--dark);
+    padding: 100px 0;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    position: relative;
+}
+
+#globeViz {
+    width: 100%;
+    height: 550px;
+    margin-top: 40px;
+    outline: none;
+}
+
+/* Penyesuaian tinggi globe di mobile agar tidak terlalu besar */
+@media(max-width: 768px) {
+    #globeViz { height: 350px; }
+}
+  
 </style>
 </head>
 <body>
@@ -786,6 +808,15 @@ footer{
       </div>
     </div>
   </div>
+</section>
+
+<section id="global-visualization">
+    <div class="reveal">
+        <div class="section-eyebrow">Visualisasi Global</div>
+        <h2 class="section-title">Jaringan <em>Tanpa Batas</em></h2>
+        <p class="section-sub" style="margin: 0 auto;">Titik utilitas $DUIT di seluruh jaringan rekanan internasional PT Universal Digital Property.</p>
+    </div>
+    <div id="globeViz"></div>
 </section>
 
 <!-- ─── ECOSYSTEM ─── -->
@@ -1084,6 +1115,64 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 // Init
 setLang('id');
+</script>
+  <script src="https://unpkg.com/globe.gl"></script>
+<script>
+    // Logic untuk Animasi Reveal saat Scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Navbar Scroll Effect
+    window.addEventListener('scroll', () => {
+        const nav = document.getElementById('navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    });
+
+    // GLOBE LOGIC
+    window.onload = function() {
+        const markerData = [
+            { lat: -6.2088, lng: 106.8456, name: "JAKARTA" },
+            { lat: -8.4095, lng: 115.1889, name: "BALI" },
+            { lat: 1.3521, lng: 103.8198, name: "SINGAPORE" },
+            { lat: 48.8566, lng: 2.3522, name: "PARIS" },
+            { lat: 40.7128, lng: -74.0060, name: "NEW YORK" }
+        ];
+
+        const world = Globe()
+            (document.getElementById('globeViz'))
+            .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
+            .backgroundColor('rgba(0,0,0,0)')
+            .showAtmosphere(true)
+            .atmosphereColor('#c8a45a')
+            .atmosphereAltitude(0.15)
+            .htmlElementsData(markerData)
+            .htmlElement(d => {
+                const el = document.createElement('div');
+                el.innerHTML = `
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <div style="width:10px; height:10px; background:var(--gold2); border-radius:50%; box-shadow: 0 0 10px var(--gold);"></div>
+                        <div style="background:rgba(13,11,7,0.9); border:1px solid var(--gold); color:var(--gold2); padding:3px 8px; border-radius:2px; font-size:10px; font-family:'Jost'; margin-top:5px; white-space:nowrap;">${d.name}</div>
+                    </div>`;
+                return el;
+            });
+
+        world.controls().autoRotate = true;
+        world.controls().autoRotateSpeed = 0.5;
+        world.controls().enableZoom = false;
+
+        window.addEventListener('resize', () => world.width(window.innerWidth));
+    };
+
+    function switchStakeholder(idx) {
+        // Placeholder function for stakeholder tabs
+        console.log("Switch to:", idx);
+    }
 </script>
 </body>
 </html>
